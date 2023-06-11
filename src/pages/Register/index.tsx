@@ -8,9 +8,31 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../contexts/auth_context";
+import { useContext, useState } from "react";
 
 export default function CadastroPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [document, setDocument] = useState("");
+
   const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
+
+  const submit = async () => {
+    try {
+      const params = new Map<string, any>();
+      params.set("email", email);
+      params.set("password", password);
+      params.set("name", name);
+      params.set("document", document);
+      await authContext?.signup(params);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <Flex direction="row" h="100vh">
       <Flex
@@ -28,18 +50,35 @@ export default function CadastroPage() {
           </Text>
           <Flex h="30px" />
           <FormLabel>E-mail</FormLabel>
-          <Input type="email" />
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <Flex h="10px" />
           <FormLabel>Nome</FormLabel>
-          <Input />
+          <Input value={name} onChange={(e) => setName(e.target.value)} />
           <Flex h="10px" />
           <FormLabel>CPF/CNPJ</FormLabel>
-          <Input />
+          <Input
+            value={document}
+            onChange={(e) => setDocument(e.target.value)}
+          />
           <Flex h="10px" />
           <FormLabel>Senha</FormLabel>
-          <Input type="password" />
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
           <Flex h="20px" />
-          <Button mt={4} colorScheme="red" w="full" alignSelf="center">
+          <Button
+            mt={4}
+            colorScheme="red"
+            w="full"
+            alignSelf="center"
+            onClick={() => submit()}
+          >
             Cadastrar
           </Button>
 
