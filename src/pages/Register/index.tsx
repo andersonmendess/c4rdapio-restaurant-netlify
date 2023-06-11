@@ -6,10 +6,12 @@ import {
   Input,
   Text,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/auth_context";
 import { useContext, useState } from "react";
+import { SignupDto } from "../../dtos/auth/signup_dto";
 
 export default function CadastroPage() {
   const [email, setEmail] = useState("");
@@ -17,19 +19,32 @@ export default function CadastroPage() {
   const [name, setName] = useState("");
   const [document, setDocument] = useState("");
 
-  const navigate = useNavigate();
   const authContext = useContext(AuthContext);
+  const toast = useToast();
+
+  const navigate = useNavigate();
 
   const submit = async () => {
     try {
-      const params = new Map<string, any>();
-      params.set("email", email);
-      params.set("password", password);
-      params.set("name", name);
-      params.set("document", document);
+      const params: SignupDto = {
+        email,
+        password,
+        name,
+        cnpj: document,
+      };
       await authContext?.signup(params);
+      toast({
+        title: "Sucesso!",
+        description: "Cadastro realizado com sucesso.",
+        status: "success",
+      });
+      navigate("/");
     } catch (e) {
-      console.log(e);
+      toast({
+        title: "Erro!",
+        description: "Houve um erro ao realizar o cadastro." + e,
+        status: "error",
+      });
     }
   };
 

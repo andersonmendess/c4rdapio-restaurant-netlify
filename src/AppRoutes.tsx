@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/login";
-import CadastroPage from "./pages/register";
+import LoginPage from "./pages/Login";
+import CadastroPage from "./pages/Register";
 
 export default function AppRoutes() {
   return (

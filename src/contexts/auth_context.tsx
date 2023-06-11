@@ -1,11 +1,12 @@
 import { useState, createContext } from "react";
 import AuthRepository from "../repositories/auth_repository";
 import { Restaurant } from "../models/restaurant";
+import { SignupDto } from "../dtos/auth/signup_dto";
 
 export interface AuthContextProps {
   isAuthenticated: boolean;
   restaurant: Restaurant | null;
-  signup: (params: Map<string, any>) => Promise<void>;
+  signup: (params: SignupDto) => Promise<Restaurant | null>;
 }
 
 export const AuthContext = createContext<AuthContextProps | null>(null);
@@ -22,18 +23,11 @@ export default function AuthProvider({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [restaurant, setRestaurant] = useState(null);
 
-  const signup = (params: Map<string, any>): Promise<void> => {
-
-    return new Promise<void>((resolve, reject) => {
-      try {
-        AuthRepository.signup(params);
-        setIsAuthenticated(true);
-        resolve();
-      } catch (e) {
-        console.error("Erro ao realizar o signup:", e);
-        reject(e);
-      }
-    });
+  const signup = async (params: Object): Promise<Restaurant | null> => {
+    const response = await AuthRepository.signup(params);
+    setRestaurant(response.data);
+    setIsAuthenticated(true);
+    return restaurant;
   };
 
   return (
