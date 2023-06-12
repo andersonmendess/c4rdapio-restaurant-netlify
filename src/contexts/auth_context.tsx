@@ -1,6 +1,5 @@
 import { useState, createContext, useEffect } from "react";
 import { AuthRepository } from "../repositories/auth_repository";
-import { SignInDto, SignUpDto } from "../dtos/auth.dto";
 import { User } from "../models/user";
 
 export interface AuthContextProps {
@@ -30,10 +29,15 @@ export default function AuthProvider({
   useEffect(() => {
     const token = localStorage.getItem("token");
     setToken(token);
-  }, []);
+
+    if (!token) {
+      onAppReady(false);
+    }
+  }, [onAppReady]);
 
   useEffect(() => {
     loadUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const onAuthTokenChange = (newToken: string | null) => {

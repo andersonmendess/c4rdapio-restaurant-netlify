@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/auth_context";
 import { SignInDto } from "../../dtos/auth.dto";
 import { PublicAuthRepository } from "../../repositories/auth_repository";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import axios, { AxiosError } from "axios";
 
 export default function LoginPage() {
@@ -63,16 +64,18 @@ export default function LoginPage() {
             Informe os seus dados de acesso para continuar.
           </Text>
           <Flex h="30px" />
-          <FormLabel>E-mail</FormLabel>
+          <FormLabel htmlFor="email">E-mail</FormLabel>
           <Input
+            id="email"
             name="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <Flex h="10px" />
-          <FormLabel>Senha</FormLabel>
+          <FormLabel htmlFor="senha">Senha</FormLabel>
           <Input
+            id="senha"
             name="senha"
             type="password"
             value={password}

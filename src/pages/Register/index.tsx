@@ -11,8 +11,9 @@ import {
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/auth_context";
 import { useContext, useState } from "react";
-import { SignInDto, SignUpDto } from "../../dtos/auth.dto";
+import { SignUpDto } from "../../dtos/auth.dto";
 import { PublicAuthRepository } from "../../repositories/auth_repository";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import axios, { AxiosError } from "axios";
 
 export default function CadastroPage() {

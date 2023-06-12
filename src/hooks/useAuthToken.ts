@@ -16,7 +16,7 @@ export default function useUser() {
     }
 
     setUser(authContext?.user ?? null);
-  }, [authContext?.user]);
+  }, [authContext?.user, navigate, user]);
 
   return user;
 }
