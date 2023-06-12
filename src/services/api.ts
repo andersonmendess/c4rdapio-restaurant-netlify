@@ -1,10 +1,10 @@
 import axios, { AxiosInstance } from "axios";
 
-const DEV_MODE = false;
+const USE_REMOTE_API = true;
 
 const buildHttpClient = (token?: string): AxiosInstance => {
   return axios.create({
-    baseURL: DEV_MODE
+    baseURL: USE_REMOTE_API
       ? "https://api-dev.c4rdapio.com"
       : "http://localhost:3000",
     timeout: 7000,
