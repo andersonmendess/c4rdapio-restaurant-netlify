@@ -1,22 +1,33 @@
+import { SignInDto, SignUpDto } from "../dtos/auth.dto";
 import buildHttpClient from "../services/api";
-import  { AxiosInstance } from "axios";
+import { AxiosInstance } from "axios";
 
-class AuthRepository {
+class PublicAuthRepository {
+  private http: AxiosInstance;
+
   constructor() {
     this.http = buildHttpClient();
   }
 
-  http: AxiosInstance;
-
-  login(params: Object) {
-    return this.http.post("/", params);
+  signIn(params: SignInDto) {
+    return this.http.post("/auth/signin", params);
   }
 
-  signup(params: Object) {
-    return this.http.post("/restaurants", params);
+  signUp(params: SignUpDto) {
+    return this.http.post("/auth/signup", params);
   }
 }
 
-const authRepository = new AuthRepository();
+class AuthRepository {
+  private http: AxiosInstance;
 
-export default authRepository;
+  constructor(token: string) {
+    this.http = buildHttpClient(token);
+  }
+
+  getProfile() {
+    return this.http.get("/auth/profile");
+  }
+}
+
+export { PublicAuthRepository, AuthRepository };

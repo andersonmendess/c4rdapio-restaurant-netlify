@@ -11,40 +11,43 @@ import {
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/auth_context";
 import { useContext, useState } from "react";
-import { SignupDto } from "../../dtos/auth/signup_dto";
+import { SignInDto, SignUpDto } from "../../dtos/auth.dto";
+import { PublicAuthRepository } from "../../repositories/auth_repository";
+import axios, { AxiosError } from "axios";
 
 export default function CadastroPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [document, setDocument] = useState("");
+  const [cpf, setCpf] = useState("");
 
   const authContext = useContext(AuthContext);
   const toast = useToast();
 
   const navigate = useNavigate();
 
-  const submit = async () => {
+  const onRegister = async () => {
+    const params: SignUpDto = {
+      email,
+      password,
+      name,
+      cpf,
+    };
+
     try {
-      const params: SignupDto = {
-        email,
-        password,
-        name,
-        cnpj: document,
-      };
-      await authContext?.signup(params);
-      toast({
-        title: "Sucesso!",
-        description: "Cadastro realizado com sucesso.",
-        status: "success",
-      });
+      const repo = new PublicAuthRepository();
+      const response = await repo.signUp(params);
+      const { access_token } = response.data;
+      authContext?.onAuthTokenChange(access_token);
       navigate("/");
-    } catch (e) {
-      toast({
-        title: "Erro!",
-        description: "Houve um erro ao realizar o cadastro." + e,
-        status: "error",
-      });
+    } catch (err: AxiosError | any) {
+      if (axios.isAxiosError(err)) {
+        return toast({
+          title: "Ops!",
+          description: err.response?.data?.message ?? err.message,
+          status: "error",
+        });
+      }
     }
   };
 
@@ -64,24 +67,32 @@ export default function CadastroPage() {
             Em poucos instantes você acessará sua dashboard
           </Text>
           <Flex h="30px" />
+
+          <FormLabel>Nome</FormLabel>
+          <Input
+            name="nome"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Flex h="10px" />
+          <FormLabel>CPF</FormLabel>
+          <Input
+            name="cpf"
+            value={cpf}
+            onChange={(e) => setCpf(e.target.value)}
+          />
+          <Flex h="10px" />
           <FormLabel>E-mail</FormLabel>
           <Input
+            name="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <Flex h="10px" />
-          <FormLabel>Nome</FormLabel>
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
-          <Flex h="10px" />
-          <FormLabel>CPF/CNPJ</FormLabel>
-          <Input
-            value={document}
-            onChange={(e) => setDocument(e.target.value)}
-          />
-          <Flex h="10px" />
           <FormLabel>Senha</FormLabel>
           <Input
+            name="senha"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -92,7 +103,7 @@ export default function CadastroPage() {
             colorScheme="red"
             w="full"
             alignSelf="center"
-            onClick={() => submit()}
+            onClick={onRegister}
           >
             Cadastrar
           </Button>

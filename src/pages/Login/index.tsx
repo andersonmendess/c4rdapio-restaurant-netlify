@@ -6,11 +6,47 @@ import {
   Input,
   Text,
   Button,
+  useToast,
 } from "@chakra-ui/react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../contexts/auth_context";
+import { SignInDto } from "../../dtos/auth.dto";
+import { PublicAuthRepository } from "../../repositories/auth_repository";
+import axios, { AxiosError } from "axios";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const authContext = useContext(AuthContext);
+  const repo = new PublicAuthRepository();
+
+  const toast = useToast();
+
+  const onLogin = async () => {
+    const params: SignInDto = {
+      email,
+      password,
+    };
+
+    try {
+      const response = await repo.signIn(params);
+      const { access_token } = response.data;
+      authContext?.onAuthTokenChange(access_token);
+      navigate("/");
+    } catch (err: AxiosError | any) {
+      if (axios.isAxiosError(err)) {
+        return toast({
+          title: "Ops!",
+          description: err.response?.data?.message ?? err.message,
+          status: "error",
+        });
+      }
+    }
+  };
+
   return (
     <Flex direction="row" h="100vh">
       <Flex
@@ -28,12 +64,28 @@ export default function LoginPage() {
           </Text>
           <Flex h="30px" />
           <FormLabel>E-mail</FormLabel>
-          <Input type="email" />
+          <Input
+            name="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
           <Flex h="10px" />
           <FormLabel>Senha</FormLabel>
-          <Input type="password" />
+          <Input
+            name="senha"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
           <Flex h="20px" />
-          <Button mt={4} colorScheme="red" w="full" alignSelf="center">
+          <Button
+            mt={4}
+            colorScheme="red"
+            w="full"
+            alignSelf="center"
+            onClick={onLogin}
+          >
             Entrar
           </Button>
 
